@@ -9,9 +9,10 @@ import { useForm } from 'react-hook-form';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import { authFormSchema } from '@/lib/utils';
+import { signIn, signUp } from '@/lib/actions/user.actions';
 import { Form } from './ui/form';
 import { Button } from './ui/button';
-import { authFormSchema } from '@/lib/utils';
 import CustomInput from './CustomInput';
 
 const AuthForm = ({ type }: { type: string }) => {
@@ -33,24 +34,25 @@ const AuthForm = ({ type }: { type: string }) => {
 
     try {
       // Sign up with Appwrite & create plaid token
-
       if (type === 'sign-up') {
-        // const newUser = await signUp(data);
-        // setUser(newUser);
+        const newUser = await signUp(data);
+
+        setUser(newUser);
       }
 
       if (type === 'sign-in') {
-        // const response = await signIn({
-        //   email: data.email,
-        //   password: data.password,
-        // });
-        // if (response) router.push('/')
+        const response = await signIn({
+          email: data.email,
+          password: data.password,
+        });
+
+        if (response) router.push('/');
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
